@@ -195,6 +195,7 @@ var device = null;
     }
 
     function logError(msg) {
+        console.error(msg);
 //        if (logContext) {
   //          let error = document.createElement("p");
     //        error.className = "error";
@@ -298,6 +299,14 @@ var device = null;
             bootloaderButton.disabled = true;
             downloadButton.disabled = true;
             firmwareFileField.disabled = true;
+
+            if(fromLandingPage) {
+                let interval = setInterval(() => {
+                    autoConnect(vid,serial).then(() => {
+                        if(device) clearInterval(interval);
+                    });
+                }, 50);
+            }
         }
 
         function onUnexpectedDisconnect(event) {
@@ -447,8 +456,19 @@ var device = null;
             return device;
         }
 
-        function autoConnect(vid, serial) {
-            dfu.findAllDfuInterfaces().then(
+        async function autoConnect(vid, serial) {
+            return navigator.usb.getDevices().then(
+                async devices => {
+                    let matches = [];
+                    for (let device of devices) {
+                        let interfaces = dfu.findDeviceDfuInterfaces(device);
+                        // fixing interface names from here
+                        await fixInterfaceNames(device, interfaces);
+                        matches.push(new dfu.Device(device, interfaces[0]))
+                    }
+                    return matches;
+                }
+            ).then(
                 async dfu_devices => {
                     let matching_devices = [];
                     for (let dfu_device of dfu_devices) {
@@ -469,6 +489,7 @@ var device = null;
                             device = matching_devices[0];
                             console.log(device);
                             device = await connect(device);
+                            app.no_device = false;
                         } else {
                             statusDisplay.textContent = "Multiple DFU interfaces found.";
                         }
