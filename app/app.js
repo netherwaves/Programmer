@@ -176,7 +176,7 @@ var app = new Vue({
                 </b-form>
             </dialog>
             <div id="usbInfo" hidden="true" style="white-space: pre"></div>
-            <div id="dfuInfo"  hidden="true" style="white-space: pre"></div>
+            <div id="dfuInfo" style="white-space: pre"></div>
             <div>
                 <b-button variant="es" v-b-toggle.collapseHelp>Display Help</b-button>
                 <b-collapse id="collapseHelp">

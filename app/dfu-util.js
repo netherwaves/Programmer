@@ -52,7 +52,8 @@ var device = null;
         const intf = device.settings["interface"].interfaceNumber;
         const alt = device.settings.alternate.alternateSetting;
         const serial = device.device_.serialNumber;
-        let info = `${mode}: [${vid}:${pid}] cfg=${cfg}, intf=${intf}, alt=${alt}, name="${name}" serial="${serial}"`;
+        // let info = `${mode}: [${vid}:${pid}] cfg=${cfg}, intf=${intf}, alt=${alt}, name="${name}" serial="${serial}"`;
+        let info = `Vendor ID: ${parseInt(vid, 16)}\nSerial number: ${serial}`;
         return info;
     }
 
