@@ -11,7 +11,7 @@ The programmer can flash user-uploaded binary files or select from a pre-compile
 
 To use the programmer, go to this page:
 
-[https://electro-smith.github.io/Programmer/](https://electro-smith.github.io/Programmer/)
+[https://netherwaves.github.io/Programmer/](https://netherwaves.github.io/Programmer/)
 
 and follow the on-page instructions.
 
