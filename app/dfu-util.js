@@ -251,6 +251,7 @@ var device = null;
                 }
                 vidField.value = "0x" + hex4(vid).toUpperCase();
                 fromLandingPage = true;
+                app.from_landing_page = true;
             } catch (error) {
                 console.log("Bad VID " + vidString + ":" + error);
             }
@@ -295,19 +296,28 @@ var device = null;
             infoDisplay.textContent = "";
             dfuDisplay.textContent = "";
             detachButton.disabled = true;
-            uploadButton.disabled = true;
+            if (!fromLandingPage) uploadButton.disabled = true;
             blinkButton.disabled = true;
             bootloaderButton.disabled = true;
             downloadButton.disabled = true;
             firmwareFileField.disabled = true;
 
+            app.no_device = true;
+
             if(fromLandingPage) {
+                autoConnectInterval(vid, serial);
+            }
+        }
+
+        async function autoConnectInterval(vid, serial) {
+            return await new Promise(resolve => {
                 let interval = setInterval(() => {
                     autoConnect(vid,serial).then(() => {
+                        resolve();
                         if(device) clearInterval(interval);
                     });
                 }, 50);
-            }
+            });
         }
 
         function onUnexpectedDisconnect(event) {
@@ -350,7 +360,7 @@ var device = null;
 
                 if (device.settings.alternate.interfaceProtocol == 0x02) {
                     if (!desc.CanUpload) {
-                        uploadButton.disabled = true;
+                        if (!fromLandingPage) uploadButton.disabled = true;
                         blinkButton.disabled = true;
                         bootloaderButton.disabled = true;
                         dfuseUploadSizeField.disabled = true;
@@ -417,7 +427,7 @@ var device = null;
             if (device.settings.alternate.interfaceProtocol == 0x01) {
                 // Runtime
                 detachButton.disabled = false;
-                uploadButton.disabled = true;
+                if (!fromLandingPage) uploadButton.disabled = true;
                 blinkButton.disabled = true;
                 bootloaderButton.disabled = true;
                 downloadButton.disabled = true;
@@ -425,7 +435,7 @@ var device = null;
 	    } else {
                 // DFU
                 detachButton.disabled = true;
-                uploadButton.disabled = false;
+                if (!fromLandingPage) uploadButton.disabled = false;
                 blinkButton.disabled = false;
                 bootloaderButton.disabled = false;
                 downloadButton.disabled = false;
@@ -484,6 +494,7 @@ var device = null;
 
                     if (matching_devices.length == 0) {
                         statusDisplay.textContent = 'No device found.';
+                        return false;
                     } else {
                         if (matching_devices.length == 1) {
                             statusDisplay.textContent = 'Connecting...';
@@ -779,7 +790,7 @@ var device = null;
             navigator.usb.addEventListener("disconnect", onUnexpectedDisconnect);
             // Try connecting automatically
             if (fromLandingPage) {
-                autoConnect(vid, serial);
+                autoConnectInterval(vid, serial);
             }
         } else {
             statusDisplay.textContent = 'WebUSB not available.'

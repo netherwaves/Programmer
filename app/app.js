@@ -10,7 +10,8 @@ const root_url = "https://electro-smith.github.io/Programmer"
 // When imported the examples will have the original data located in the .json file
 // as well as the 'source' field containing the data structure used to find the example
 
-var data = { 
+var data = {
+    from_landing_page: false,
     platforms: [],
     examples: [],
     no_device: true,
@@ -168,7 +169,7 @@ var app = new Vue({
         <div>
             <legend>Daisy Web Programmer</legend>
             <p> Connect to the Daisy - If this is your first time here, follow the steps in Help section below </p>
-            <p><b-button variant="es" id="connect"> Connect</b-button></p>
+            <p id="connectCtn"><b-button variant="es" id="connect" :disabled.native="from_landing_page">{{ from_landing_page ? 'Reconnecting...' : 'Connect' }}</b-button><img v-if="from_landing_page && no_device" src="img/loading.gif" id="loadingGif" alt="Loading wheel" /></p>
             <dialog id="interfaceDialog">
                 Your device has multiple DFU interfaces. Select one from the list below:
                 <b-form id="interfaceForm" method="dialog">
